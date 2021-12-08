@@ -34,7 +34,7 @@ class Seminar2:
             choice = int(input())
             filename = files[choice]
             return filename
-        except:
+        except BaseException:
             print("Wrong input")
             exit()
 
@@ -116,8 +116,15 @@ class Seminar2:
             codecs = [(stream.codec_type, stream.codec())
                       for stream in metadata.streams]
         elif mode == "2":
-            codecs = [("video", c) for c in random.sample(list(b_standards["video"].keys(
-            )), random.randint(1, 4))] + [("audio", c) for c in random.sample(list(b_standards["audio"].keys()), random.randint(1, 5))]
+            codecs = [
+                ("video", c) for c in random.sample(
+                    list(
+                        b_standards["video"].keys()), random.randint(
+                        1, 4))] + [
+                ("audio", c) for c in random.sample(
+                    list(
+                        b_standards["audio"].keys()), random.randint(
+                        1, 5))]
 
         else:
             print("Mode choice error")
@@ -152,9 +159,10 @@ class Seminar2:
 
         infile = self.choose_file(
             "To which file would you like to add subtitles to?")
-        
+
         if 'subs' in infile:
-            print("This video already contains a subtitle track, add new one anyways? [y/n]") 
+            print(
+                "This video already contains a subtitle track, add new one anyways? [y/n]")
             x = input()
             if x == "y":
                 pass
@@ -168,9 +176,15 @@ class Seminar2:
         print("3 ···· Akira")
 
         subtitles = {
-            "1": ["BBB", "https://www.opensubtitles.org/en/subtitleserve/sub/5833874"],
-            "2": ["lotr1", "https://www.opensubtitles.org/en/subtitleserve/sub/4493239"],
-            "3": ["akira", "https://www.opensubtitles.org/en/subtitleserve/sub/8683843"],
+            "1": [
+                "BBB",
+                "https://www.opensubtitles.org/en/subtitleserve/sub/5833874"],
+            "2": [
+                "lotr1",
+                "https://www.opensubtitles.org/en/subtitleserve/sub/4493239"],
+            "3": [
+                "akira",
+                "https://www.opensubtitles.org/en/subtitleserve/sub/8683843"],
         }
 
         choice = input()
@@ -208,23 +222,24 @@ class Seminar2:
             else:
                 print("Subtitle track file already in repository")
 
-        except:
+        except BaseException:
             print("File download error, try with a different link")
             exit()
 
-        # modify time stamps so that some text is actually displayed on the output video
+        # modify time stamps so that some text is actually displayed on the
+        # output video
         if f'{track}_offset.srt' not in os.listdir('downloads/' + track):
             with open(f'downloads/{track}/{track}.srt') as file:
                 lines = file.readlines()
                 first_time_stamp = lines[1].split(" --> ")[0].split(":")
-                offset = int(first_time_stamp[0])*3600 + int(first_time_stamp[1]
-                                                             )*60 + int(first_time_stamp[2].split(",")[0])
+                offset = int(first_time_stamp[0]) * 3600 + int(
+                    first_time_stamp[1]) * 60 + int(first_time_stamp[2].split(",")[0])
 
             try:
                 subprocess.call(
                     f'ffmpeg -itsoffset -{offset} -y -i downloads/{track}/{track}.srt -c copy downloads/{track}/{track}_offset.srt'.split(" "))
                 print("Subtitles offsetted correctly.")
-            except:
+            except BaseException:
                 print("Offset operation failed, please try with a different link")
                 exit()
 
@@ -236,7 +251,7 @@ class Seminar2:
             command = f'ffmpeg -y -i {infile} -vf subtitles=downloads/{track}/{track}_offset.srt {outfile}'
             subprocess.call(command.split(" "))
             print(f'Video outputted to {outfile}')
-        except:
+        except BaseException:
             print(
                 "Video and subtitle combination failed. Please try with a different file")
             exit()
